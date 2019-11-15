@@ -9,7 +9,7 @@ class Util{
 	 * 선언방법 : 리턴타입 앞에 <> 기호 추가+ 타입 파라미터 기술 후 사용
 	 * 
 	 */
-	//<제너릭 타입> 리턴타입 메소드명
+	//<제너릭 타입> 리턴타입 메소드명 
 	public static <K,V> boolean compare(Pair<K,V> p1, Pair<K,V> p2) { 
 		boolean keyCompare = p1.getKey().equals(p2.getKey());
 		boolean valueCompare = p1.getValue().equals(p2.getValue());

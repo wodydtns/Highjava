@@ -54,6 +54,7 @@ public class T07_WildCardTest {
 		
 		Course<Worker> workerCourse = new Course("직장인과정", 5);
 		workerCourse.add(new Worker("직장인1"));
+//		workerCourse.add(new Person("일반인1")); 
 		
 		Course<Student> studentCourse = new Course("학생과정", 5);
 		studentCourse.add(new Student("학생1"));
