@@ -3,6 +3,7 @@ package kr.or.ddit.basic;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -37,5 +38,7 @@ public class T06_PropertiesTest {
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
+		Date today = new Date();
+		System.out.println(today);
 	}
 }
