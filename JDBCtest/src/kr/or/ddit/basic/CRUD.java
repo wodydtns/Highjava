@@ -5,11 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Scanner;
+
+import org.apache.log4j.Logger;
 
 import util.DBUtil3;
 
@@ -20,6 +19,12 @@ public class CRUD {
 	private ResultSet rs;
 
 	private Scanner s = new Scanner(System.in);
+	
+	//log4j를 이용한 로그 남기기
+	// log 정의
+	private static final Logger sqlLogger = Logger.getLogger("log4jexam.sql.Query");
+	private static final Logger paramLogger = Logger.getLogger("log4jexam.sql.Parameter");
+	private static final Logger resultLogger = Logger.getLogger(CRUD.class);
 
 	//메뉴
 	public void displayMenu() {
@@ -162,17 +167,24 @@ public class CRUD {
 			
 			conn=DBUtil3.getConnection();
 			String sql = "update jdbc_board" + " set board_title = ? , board_writer = ? ," 
-					+ " board_date = ? , board_content = ";
+					+ " board_date = sysdate , board_content = ? where board_no = "+ num;
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, num);
-			pstmt.setString(2, title);
-			pstmt.setString(3, writer);
-//			pstmt.setDate(4, new java.sql.Date(System.currentTimeMillis())); -- 현재 날짜로 변경해야함
-			pstmt.setString(5, content);
+
+			pstmt.setString(1, title);
+			pstmt.setString(2, writer);
+			pstmt.setString(3, content);
+			int cnt = pstmt.executeUpdate();
+			if(cnt >0) {
+				System.out.println("업데이트에 성공했습니다.");
+			}else {
+				System.out.println("수정 실패");
+			}
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
 			System.out.println("수정 실패");
+		}finally {
+			disConnect();
 		}
 	}
 	
@@ -195,21 +207,24 @@ public class CRUD {
 			
 			conn=DBUtil3.getConnection();
 			//테이블에 데이터 넣기
-			String sql = "insert into jdbc_board values (?,?,?,?,?)";
+			String sql = "insert into jdbc_board values (board_seq.nextval,?,?,sysdate,?) ";
 			// 글 작성 날짜로 세팅
-			
-			//글 번호 만들기 - nextval 사용(시퀸스) - dual 컬럼 사용 시 nullpoint
-			int num = 1;
 			// 데이터 넣기
-					
+			
+			//로깅 프로그램을 이용해 로그 찍기
+			//쿼리문 로그 찍기
+			sqlLogger.debug("쿼리 :" + sql );
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, num++);
-			pstmt.setString(2,title);
-			pstmt.setString(3, writer);
+
+			pstmt.setString(1,title);
+			pstmt.setString(2, writer);
 			// 오늘 날짜 가지고 오기.
-			pstmt.setDate(4, new java.sql.Date(System.currentTimeMillis()));
-			pstmt.setString(5, content);
+			pstmt.setString(3, content);
+			
+			paramLogger.debug("파라미터: "+ "(" +title+","+writer +"," + content +")" ); 
 			int cnt = pstmt.executeUpdate();
+			
+			resultLogger.debug("결과 : " + cnt);
 			if(cnt >0) {
 				System.out.println("success");
 			}else {

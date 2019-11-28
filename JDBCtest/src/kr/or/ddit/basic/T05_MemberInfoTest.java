@@ -1,10 +1,13 @@
 package kr.or.ddit.basic;
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
+
+import org.apache.log4j.Logger;
 
 import util.DBUtil3;
 
@@ -43,6 +46,11 @@ public class T05_MemberInfoTest {
 	private ResultSet rs;
 	
 	private Scanner scan = new Scanner(System.in); 
+	//log4j를 이용한 로그 남기기 
+	//log 정의
+	private static final Logger sqlLogger = Logger.getLogger("log4jexam.sql.Query");
+	private static final Logger paramLogger = Logger.getLogger("log4jexam.sql.Parameter");
+	private static final Logger resultLogger = Logger.getLogger(T05_MemberInfoTest.class);
 	
 	/**
 	 * 메뉴를 출력하는 메서드
@@ -227,13 +235,21 @@ public class T05_MemberInfoTest {
 			conn = DBUtil3.getConnection();
 			String sql = "insert into mymember (mem_id,mem_name,mem_tel,mem_addr)" + 
 						 " values (?,?,?,?)";
+			//로깅 프로그램을 이용해 로그 찍기
+			sqlLogger.debug("쿼리 : " +sql);
+		
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1,memId);
 			pstmt.setString(2,memName);
 			pstmt.setString(3,memTel);
 			pstmt.setString(4, memAddr);
 			
+			paramLogger.debug("파라미터 : "+ "("+memId +","+ memName+","+memTel+","+memAddr+")");
+			
 			int cnt = pstmt.executeUpdate();
+			
+			resultLogger.debug("결과: " + cnt);
+			
 			if(cnt > 0) {
 				System.out.println(memId + " 회원 추가 작업 성공");
 			}else {
